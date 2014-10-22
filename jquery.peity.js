@@ -5,43 +5,6 @@
 //
 // Released under MIT license.
 (function($, document, Math, undefined) {
-  var svgElement = function(tag, attrs) {
-    var elem = document.createElementNS("http://www.w3.org/2000/svg", tag)
-    $(elem).attr(attrs)
-    return elem
-  }
-
-  // https://gist.github.com/madrobby/3201472
-  var svgSupported = 'createElementNS' in document && svgElement('svg', {}).createSVGRect
-
-  var peity = $.fn.peity = function(type, options) {
-    if (svgSupported) {
-      this.each(function() {
-        var $this = $(this)
-        var chart = $this.data("peity")
-
-        if (chart) {
-          if (type) chart.type = type
-          $.extend(chart.opts, options)
-        } else {
-          chart = new Peity(
-            $this,
-            type,
-            $.extend({}, peity.defaults[type], options)
-          )
-
-          $this
-            .change(function() { chart.draw() })
-            .data("peity", chart)
-        }
-
-        chart.draw()
-      });
-    }
-
-    return this;
-  };
-
   var Peity = function($el, type, opts) {
     this.$el = $el
     this.type = type
@@ -80,11 +43,48 @@
       })
   }
 
+  var svgElement = PeityPrototype.svgElement = function(tag, attrs) {
+    var elem = document.createElementNS('http://www.w3.org/2000/svg', tag)
+    $(elem).attr(attrs)
+    return elem
+  }
+
   PeityPrototype.values = function() {
     return $.map(this.$el.text().split(this.opts.delimiter), function(value) {
       return parseFloat(value)
     })
   }
+
+  // https://gist.github.com/madrobby/3201472
+  var svgSupported = 'createElementNS' in document && svgElement('svg', {}).createSVGRect
+
+  var peity = $.fn.peity = function(type, options) {
+    if (svgSupported) {
+      this.each(function() {
+        var $this = $(this)
+        var chart = $this.data("peity")
+
+        if (chart) {
+          if (type) chart.type = type
+          $.extend(chart.opts, options)
+        } else {
+          chart = new Peity(
+            $this,
+            type,
+            $.extend({}, peity.defaults[type], options)
+          )
+
+          $this
+            .change(function() { chart.draw() })
+            .data("peity", chart)
+        }
+
+        chart.draw()
+      });
+    }
+
+    return this;
+  };
 
   peity.defaults = {}
   peity.graphers = {}
