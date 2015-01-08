@@ -4,7 +4,7 @@
   "main": "jquery.peity.js",
   "dependencies": {
     "jquery": ">=1.6.2"
-  }
+  },
   "ignore": [
     "**/.*",
     "node_modules",
